@@ -4,12 +4,10 @@
  *  Last modified:     29/01/2025
  **************************************************************************** */
 
-package test.chapter1.one;
+package test.chapter1.three;
 
-public class RandomConnections {
-
+public class RezisingArrayDeque {
     public static void main(String[] args) {
-        int n = Integer.parseInt(args[0]);
-        double p = Double.parseDouble(args[1]);
+
     }
 }
