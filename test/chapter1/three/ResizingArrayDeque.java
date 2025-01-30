@@ -7,79 +7,96 @@
 package test.chapter1.three;
 
 public class ResizingArrayDeque<Item> {
-    Item[] array = (Item[]) new Object[1];
+    private Item[] array;
+    private int head;
+    private int tail;
+    private int size;
 
-    int head = 0;
-    int tail = 0;
-
+    public ResizingArrayDeque() {
+        array = (Item[]) new Object[1];
+        head = 0;
+        tail = 0;
+        size = 0;
+    }
 
     // isEmpty()
-    boolean isEmpty() {
-        return head == tail;
+    public boolean isEmpty() {
+        return size == 0;
     }
 
     // size()
-    int size() {
-        return tail - head;
+    public int size() {
+        return size;
     }
 
     // pushLeft()
-    void pushLeft(Item item) {
-        if (tail == (array.length - 1)) {
+    public void pushLeft(Item item) {
+        if (size == array.length) {
             resizeArray(2 * array.length);
         }
-
-        // move all array one position
-        for (int i = tail; i >= head; i--) {
-            array[i + 1] = array[i];
-        }
+        head = (head - 1 + array.length) % array.length;
         array[head] = item;
-        tail++;
-
+        size++;
     }
 
     // pushRight()
-    void pushRight(Item item) {
-        if (tail == (array.length - 1)) {
+    public void pushRight(Item item) {
+        if (size == array.length) {
             resizeArray(2 * array.length);
         }
-
-        // move all array one position
-        for (int i = tail; i >= head; i--) {
-            array[i + 1] = array[i];
-        }
-        array[head] = item;
-        tail++;
-
+        array[tail] = item;
+        tail = (tail + 1) % array.length;
+        size++;
     }
 
     // popLeft()
-    Item popLeft() {
+    public Item popLeft() {
+        if (isEmpty()) {
+            throw new RuntimeException("Deque is empty");
+        }
         Item item = array[head];
-        head++;
+        array[head] = null;
+        head = (head + 1) % array.length;
+        size--;
+        if (size > 0 && size == array.length / 4) {
+            resizeArray(array.length / 2);
+        }
         return item;
     }
 
     // popRight()
-    Item popRight() {
+    public Item popRight() {
+        if (isEmpty()) {
+            throw new RuntimeException("Deque is empty");
+        }
+        tail = (tail - 1 + array.length) % array.length;
         Item item = array[tail];
-        tail--;
+        array[tail] = null;
+        size--;
+        if (size > 0 && size == array.length / 4) {
+            resizeArray(array.length / 2);
+        }
         return item;
     }
 
     // resizeArray()
     private void resizeArray(int newSize) {
         Item[] newArray = (Item[]) new Object[newSize];
-
-        for (int i = head; i < tail; i++) {
-            newArray[i] = array[i];
+        for (int i = 0; i < size; i++) {
+            newArray[i] = array[(head + i) % array.length];
         }
-
         array = newArray;
-
+        head = 0;
+        tail = size;
     }
 
     public static void main(String[] args) {
-
+        ResizingArrayDeque<Integer> deque = new ResizingArrayDeque<>();
+        deque.pushLeft(1);
+        deque.pushRight(2);
+        deque.pushLeft(0);
+        System.out.println(deque.popLeft()); // 0
+        System.out.println(deque.popRight()); // 2
+        System.out.println(deque.popLeft()); // 1
     }
 }

@@ -21,17 +21,18 @@ package test.chapter1.three;
  * RezisingArrayDeque that uses a resizing array.
  */
 public class Deque<Item> {
-    private class Node<Item> {
+    private class Node {
         Item item;
-        Node<Item> next;
-        Node<Item> previous;
+        Node next;
+        Node previous;
 
         Node(Item item) {
             this.item = item;
         }
     }
 
-    private Node<Item> first; // top of stack (most recently added node)
+    private Node first; // top of stack (most recently added node)
+    private Node last;  // end of queue (most recently added node)
 
     boolean isEmpty() {
         return first == null;
@@ -39,7 +40,7 @@ public class Deque<Item> {
 
     int size() {
         int size = 0;
-        Node<Item> current = first;
+        Node current = first;
         while (current != null) {
             size++;
             current = current.next;
@@ -48,9 +49,10 @@ public class Deque<Item> {
     }
 
     void pushLeft(Item item) {
-        Node<Item> newNode = new Node<>(item);
+        Node newNode = new Node(item);
         if (first == null) {
             first = newNode;
+            last = newNode;
         }
         else {
             newNode.next = first;
@@ -60,22 +62,18 @@ public class Deque<Item> {
     }
 
     void pushRight(Item item) {
-        Node<Item> newNode = new Node<>(item);
+        Node newNode = new Node(item);
         if (first == null) {
             first = newNode;
+            last = newNode;
         }
         else {
-            Node<Item> last = first;
-            while (last.next != null) {
-                last = last.next;
-            }
-
             last.next = newNode;
             newNode.previous = last;
+            last = newNode;
         }
     }
 
-    // popLeft()
     Item popLeft() {
         if (first == null) {
             return null;
@@ -83,28 +81,40 @@ public class Deque<Item> {
         else {
             Item item = first.item;
             first = first.next;
+            if (first != null) {
+                first.previous = null;
+            }
+            else {
+                last = null;
+            }
             return item;
         }
     }
 
-    // popRight()
     Item popRight() {
-        if (first == null) {
+        if (last == null) {
             return null;
         }
         else {
-            Node<Item> last = first;
-            while (last.next != null) {
-                last = last.next;
-            }
             Item item = last.item;
-            last.previous.next = null;
+            last = last.previous;
+            if (last != null) {
+                last.next = null;
+            }
+            else {
+                first = null;
+            }
             return item;
         }
     }
 
-
     public static void main(String[] args) {
-
+        Deque<Integer> deque = new Deque<>();
+        deque.pushLeft(1);
+        deque.pushRight(2);
+        deque.pushLeft(0);
+        System.out.println(deque.popLeft()); // 0
+        System.out.println(deque.popRight()); // 2
+        System.out.println(deque.popLeft()); // 1
     }
 }

@@ -13,56 +13,74 @@ package test.chapter1.three;
  */
 public class Steque<Item> {
 
-    private class Node<Item> {
+    private class Node {
         Item item;
-        Node<Item> next;
+        Node next;
 
         Node(Item item) {
             this.item = item;
         }
     }
 
-    private Node<Item> first; // top of stack (most recently added node)
+    private Node head; // top of stack (most recently added node)
+    private Node tail; // end of queue (most recently added node)
+
+    public Steque() {
+        head = null;
+        tail = null;
+    }
 
     // push
     void push(Item item) {
-        Node<Item> newNode = new Node<>(item);
-        if (first == null) {
-            first = newNode;
+        Node newNode = new Node(item);
+        if (head == null) {
+            head = newNode;
+            tail = newNode;
         }
         else {
-            newNode.next = first;
-            first = newNode;
+            newNode.next = head;
+            head = newNode;
         }
     }
 
     // pop
     Item pop() {
-        if (first == null) {
+        if (head == null) {
             return null;
         }
-        Item item = first.item;
-        first = first.next;
+        Item item = head.item;
+        head = head.next;
+        if (head == null) {
+            tail = null;
+        }
         return item;
     }
 
     // enqueue
     void enqueue(Item item) {
-        Node<Item> newNode = new Node<>(item);
-        if (first == null) {
-            first = newNode;
+        Node newNode = new Node(item);
+        if (tail == null) {
+            head = newNode;
+            tail = newNode;
         }
         else {
-            Node<Item> current = first;
-            while (current.next != null) {
-                current = current.next;
-            }
-            current.next = newNode;
+            tail.next = newNode;
+            tail = newNode;
         }
     }
 
+    // check if the steque is empty
+    boolean isEmpty() {
+        return head == null;
+    }
 
     public static void main(String[] args) {
-
+        Steque<Integer> steque = new Steque<>();
+        steque.push(1);
+        steque.push(2);
+        steque.enqueue(3);
+        System.out.println(steque.pop()); // 2
+        System.out.println(steque.pop()); // 1
+        System.out.println(steque.pop()); // 3
     }
 }
