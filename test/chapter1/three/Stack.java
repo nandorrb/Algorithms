@@ -12,13 +12,13 @@ import java.util.NoSuchElementException;
 public class Stack<Item> implements Iterable<Item> {
 
 
-    private Node<Item> first; // top of stack (most recently added node)
+    Node<Item> first; // top of stack (most recently added node)
     private int n; // number of items
 
     // helper linked list class
-    private static class Node<Item> {
-        private Item item;
-        private Node<Item> next;
+    static class Node<Item> {
+        Item item;
+        Node<Item> next;
     }
 
     public Stack() {
